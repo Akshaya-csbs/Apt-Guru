@@ -1,5 +1,5 @@
 import { Camera, File as FileIcon, Mic, Paperclip, Send, Lightbulb, BrainCircuit, Dices } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 type UploadedFile = {
   file: File;
@@ -10,9 +10,17 @@ type UploadedFile = {
 
 export default function ChatInput({ onSendMessage }: { onSendMessage: (msg: string, file?: File | null, fileUrl?: string) => void }) {
   const [text, setText] = useState("");
+  const [isListening, setIsListening] = useState(false);
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [glowing, setGlowing] = useState(true);
+
+  // 3-second welcome glow on first load
+  useEffect(() => {
+    const timer = setTimeout(() => setGlowing(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +49,34 @@ export default function ChatInput({ onSendMessage }: { onSendMessage: (msg: stri
     setSelectedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+
+  const handleVoiceInput = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice input is not supported in your browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setText(prev => prev ? prev + ' ' + transcript : transcript);
+    };
+
+    recognition.start();
   };
 
   return (
@@ -93,7 +129,11 @@ export default function ChatInput({ onSendMessage }: { onSendMessage: (msg: stri
         </div>
       )}
 
-      <div className="relative p-2 sm:p-3 bg-black rounded-[2rem] border border-[#262626]">
+      <div className={`relative p-2 sm:p-3 bg-black rounded-[2rem] border transition-all duration-700 ${
+        glowing
+          ? "border-purple-500 shadow-[0_0_0_3px_rgba(168,85,247,0.25),0_0_30px_rgba(168,85,247,0.3)] animate-pulse"
+          : "border-[#262626]"
+      }`}>
         <form onSubmit={handleSubmit} className="flex items-end gap-2">
           <div className="flex gap-0.5 pb-1">
             <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2.5 text-neutral-400 hover:text-white hover:bg-[#262626] rounded-full transition-all" title="Upload Image or Document">
@@ -142,8 +182,18 @@ export default function ChatInput({ onSendMessage }: { onSendMessage: (msg: stri
                 Solve <Send size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
             ) : (
-              <button type="button" className="p-3.5 bg-[#262626] text-neutral-400 rounded-full hover:bg-[#333333] hover:text-white transition-colors">
-                <Mic size={18} />
+              <button 
+                type="button" 
+                onClick={handleVoiceInput}
+                className={`p-3.5 rounded-full transition-all flex items-center justify-center shadow-sm ${
+                  isListening 
+                    ? 'bg-pink-500/20 text-pink-500 border border-pink-500/50 animate-pulse relative' 
+                    : 'bg-[#262626] text-neutral-400 hover:bg-[#333333] hover:text-white border border-transparent'
+                }`}
+                title="Use Voice Input"
+              >
+                {isListening && <span className="absolute inset-0 rounded-full animate-ping bg-pink-500/30"></span>}
+                <Mic size={18} className={isListening ? "relative z-10" : ""} />
               </button>
             )}
           </div>

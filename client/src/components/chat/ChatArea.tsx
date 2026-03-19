@@ -1,5 +1,14 @@
-import { Bot, Lightbulb, Sparkles, User, BrainCircuit, Calculator, BookOpen, BarChart3, Brain } from "lucide-react";
+import { Bot, Lightbulb, BrainCircuit, Calculator, BookOpen, BarChart3, Brain, User } from "lucide-react";
 import { useEffect, useRef } from "react";
+
+// Helper: renders **bold** markdown inline into React elements
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return parts.map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="text-white font-bold">{part}</strong> : part
+  );
+}
+
 
 export type Message = {
   id: string;
@@ -21,14 +30,16 @@ export default function ChatArea({ messages, isTyping, onTopicSelect }: { messag
     <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-6 scroll-smooth">
       <div className="max-w-4xl mx-auto space-y-8">
         {messages.length === 0 && (
-          <div className="h-full flex flex-col items-center justify-center py-10 opacity-80 animate-in fade-in zoom-in duration-500">
-            <div className="w-20 h-20 mb-4 rounded-[1.5rem] bg-gradient-to-tr from-[#f09433]/10 via-[#dc2743]/10 to-[#bc1888]/10 flex items-center justify-center p-1 relative overflow-hidden">
-               <div className="absolute inset-0 bg-black/40 backdrop-blur-xl"></div>
-               <BrainCircuit size={40} className="text-pink-500 relative z-10 animate-float" />
+          <div className="flex flex-col items-center justify-center py-10 animate-in fade-in zoom-in duration-500">
+            {/* Static icon — no glow */}
+            <div className="relative mb-5">
+              <div className="w-20 h-20 rounded-[1.5rem] bg-gradient-to-tr from-purple-600/20 via-[#dc2743]/20 to-[#bc1888]/20 border border-purple-500/30 flex items-center justify-center relative">
+                <BrainCircuit size={40} className="text-purple-400" />
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Welcome to AptGuru!</h2>
-            <p className="text-neutral-300 text-center max-w-sm mb-8 text-sm leading-relaxed">
-              Select a topic below to start your personalized learning journey, or ask a specific question.
+            <h2 className="text-2xl font-extrabold text-white mb-1 tracking-tight">Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">AptGuru</span>!</h2>
+            <p className="text-neutral-400 text-center max-w-xs mb-8 text-sm leading-relaxed px-4">
+              Your AI-powered aptitude tutor. Pick a topic or ask any question to get started.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl px-2">
@@ -120,69 +131,99 @@ export default function ChatArea({ messages, isTyping, onTopicSelect }: { messag
                         </div>
                       )}
                       
-                      {/* Simple markdown rendering */}
-                      <div className="space-y-4">
-                        {msg.content.split('\n\n').map((paragraph, i) => {
-                          if (paragraph.startsWith('**Shortcut:**') || paragraph.startsWith('💡 **Shortcut:**') || paragraph.startsWith('💡 Shortcut:')) {
-                            return (
-                              <div key={i} className="bg-gradient-to-r from-orange-500/10 to-transparent p-4 rounded-xl border-l-[3px] border-orange-500 flex items-start gap-3 my-5">
-                                <div className="text-orange-400 mt-0.5"><Sparkles size={18} /></div>
-                                <div className="text-neutral-200 text-[15px] font-medium leading-relaxed">{paragraph.replace(/\*\*Shortcut:\*\*|💡 \*\*Shortcut:\*\*|💡 Shortcut:/g, '')}</div>
-                              </div>
-                            );
-                          }
+                      {/* Structured AI response renderer */}
+                      <div className="space-y-3 text-[14px] sm:text-[15px] leading-relaxed">
+                        {(() => {
+                          // Strip stray # and $ symbols that hurt readability
+                          const cleaned = msg.content
+                            .replace(/^#{1,6}\s+/gm, '')       // remove markdown headers
+                            .replace(/\$\$?[^$\n]+\$\$?/g, matched => matched.replace(/\$/g, '').trim()) // strip $ from math
+                            .trim();
+                          
+                          const blocks = cleaned.split('\n\n').filter(Boolean);
+                          
+                          return blocks.map((block, i) => {
+                            const t = block.trim();
 
-                          if (paragraph.startsWith('**Why other options are wrong:**')) {
-                            return (
-                              <div key={i} className="bg-red-500/5 border border-red-500/10 p-4 rounded-xl mt-6">
-                                <h4 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-1.5"><BrainCircuit size={16} /> Why other options are wrong:</h4>
-                                <div className="space-y-2 text-neutral-300">
-                                  {paragraph.replace('**Why other options are wrong:**', '').split('\n').filter(Boolean).map((line, j) => {
-                                    const boldLineParts = line.split(/\*\*(.*?)\*\*/g);
-                                    return (
-                                      <p key={j} className="text-[14px]">
-                                         {boldLineParts.map((part, k) => k % 2 === 1 ? <strong key={k} className="text-white font-bold">{part}</strong> : part)}
-                                      </p>
-                                    );
+                            // Shortcut block
+                            if (t.includes('Shortcut Trick') || t.includes('💡 **Shortcut') || t.startsWith('💡 Shortcut')) {
+                              return (
+                                <div key={i} className="bg-gradient-to-r from-orange-500/15 to-amber-500/5 p-4 rounded-2xl border-l-4 border-orange-500 flex gap-3 mt-2">
+                                  <span className="text-orange-400 text-xl shrink-0">⚡</span>
+                                  <div className="text-orange-100 font-medium">{renderInline(t.replace(/💡 \*\*Shortcut(?: Trick)?:\*\*|💡 Shortcut(?: Trick)?:/gi, '').trim())}</div>
+                                </div>
+                              );
+                            }
+
+                            // Final Answer block
+                            if (t.startsWith('🎯') || t.toLowerCase().startsWith('final answer') || t.includes('🎯 **Final Answer')) {
+                              return (
+                                <div key={i} className="bg-gradient-to-r from-emerald-500/15 to-green-500/5 p-4 rounded-2xl border-l-4 border-emerald-500 flex gap-3 mt-2">
+                                  <span className="text-emerald-400 text-xl shrink-0">🎯</span>
+                                  <div className="text-emerald-100 font-semibold">{renderInline(t.replace(/🎯 \*\*Final Answer[:\*]*/gi, '').trim())}</div>
+                                </div>
+                              );
+                            }
+
+                            // Hint block
+                            if (t.startsWith('💡 **Hint') || t.toLowerCase().startsWith('💡 hint')) {
+                              return (
+                                <div key={i} className="bg-gradient-to-r from-yellow-500/15 to-transparent p-4 rounded-2xl border-l-4 border-yellow-500 flex gap-3">
+                                  <span className="text-yellow-400 text-xl shrink-0">💡</span>
+                                  <div className="text-yellow-100 font-medium">{renderInline(t.replace(/💡 \*\*Hint[:\*]*/gi, '').trim())}</div>
+                                </div>
+                              );
+                            }
+
+                            // Why other options block
+                            if (t.includes('Why Other Options') || t.includes('🧠 **Why')) {
+                              return (
+                                <div key={i} className="bg-red-500/5 border border-red-500/15 p-4 rounded-2xl mt-2">
+                                  <div className="text-red-400 font-bold text-sm mb-2 flex items-center gap-1.5">🧠 Why Other Options Are Wrong</div>
+                                  <div className="space-y-1.5 text-neutral-300">
+                                    {t.replace(/🧠 \*\*Why Other Options Are Wrong[:\*]*/gi,'').split('\n').filter(Boolean).map((line,j) => (
+                                      <p key={j} className="text-[13px]">{renderInline(line)}</p>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            // Numbered step list — render each line as a styled step card
+                            const lines = t.split('\n');
+                            const isStepBlock = lines.filter(l => /^\d+\./.test(l.trim())).length >= 2;
+                            if (isStepBlock) {
+                              return (
+                                <div key={i} className="space-y-2">
+                                  {lines.map((line, j) => {
+                                    const stepMatch = line.trim().match(/^(\d+)\.\s+(.*)/);
+                                    if (stepMatch) {
+                                      return (
+                                        <div key={j} className="flex gap-3 items-start bg-[#1a1a1a] rounded-xl px-4 py-2.5 border border-[#2e2e2e]">
+                                          <span className="w-6 h-6 rounded-full bg-pink-500/20 text-pink-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{stepMatch[1]}</span>
+                                          <span className="text-neutral-200">{renderInline(stepMatch[2])}</span>
+                                        </div>
+                                      );
+                                    }
+                                    return line ? <p key={j} className="text-neutral-300 px-1">{renderInline(line)}</p> : null;
                                   })}
                                 </div>
-                              </div>
-                            );
-                          }
+                              );
+                            }
 
-                          if (paragraph.startsWith('📖 **Let me tell you a story...**')) {
-                            return (
-                              <div key={i} className="mb-4">
-                                <span className="text-pink-400 font-bold text-lg flex items-center gap-2 mb-2">📖 Let me tell you a story...</span>
-                              </div>
-                            );
-                          }
+                            // Section header line (bold standalone line like **Understanding the Problem**)
+                            if (/^\*\*[^*]+\*\*$/.test(t) || /^[🔍📊✅💡🎯🧠📖]/.test(t)) {
+                              return <p key={i} className="font-bold text-white text-[15px] mt-3 mb-1">{renderInline(t)}</p>;
+                            }
 
-                          if (paragraph.startsWith('🧠 **1 Concept → 2 Problems → 1 Shortcut**')) {
+                            // Default paragraph
                             return (
-                              <div key={i} className="mb-4">
-                                <span className="text-purple-400 font-bold text-lg flex items-center gap-2 mb-2">🧠 1 Concept → 2 Problems → 1 Shortcut</span>
-                              </div>
+                              <p key={i} className="text-neutral-300">
+                                {renderInline(t)}
+                              </p>
                             );
-                          }
-
-                          if (paragraph.startsWith('💡 **Hint:**')) {
-                            return (
-                              <div key={i} className="bg-gradient-to-r from-yellow-500/10 to-transparent p-4 rounded-xl border-l-[3px] border-yellow-500 flex items-start gap-3 my-2 shadow-sm">
-                                <div className="text-yellow-400 mt-0.5"><Lightbulb size={18} /></div>
-                                <div className="text-neutral-200 text-[15px] font-medium leading-relaxed">{paragraph.replace('💡 **Hint:**', '').trim()}</div>
-                              </div>
-                            );
-                          }
-                          
-                          // Handle bold text rendering simply
-                          const boldParts = paragraph.split(/\*\*(.*?)\*\*/g);
-                          return (
-                            <p key={i}>
-                              {boldParts.map((part, j) => j % 2 === 1 ? <strong key={j} className="text-white font-bold">{part}</strong> : part)}
-                            </p>
-                          );
-                        })}
+                          });
+                        })()}
                       </div>
                     </div>
                   )}
