@@ -115,7 +115,7 @@ export default function Home() {
   }
 
   return (
-    <div className="fixed inset-0 flex bg-black overflow-hidden font-outfit">
+    <div className="flex h-[100dvh] w-full bg-black overflow-hidden font-outfit text-white">
       {/* Ambient glows */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-purple-700/20 rounded-full blur-[100px]" />
@@ -211,7 +211,7 @@ export default function Home() {
       )}
 
       {/* ─── MAIN CONTENT ─── */}
-      <div className="flex flex-1 flex-col h-[100dvh] min-w-0 relative z-10 overflow-hidden">
+      <div className="flex flex-1 flex-col h-full min-w-0 relative z-10 overflow-hidden">
 
         {/* Top Header */}
         <header className="shrink-0 flex items-center justify-between px-3 py-2.5 bg-black/90 backdrop-blur-md border-b border-[#1e1e1e] z-20 gap-2">

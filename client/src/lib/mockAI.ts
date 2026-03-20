@@ -18,7 +18,7 @@ export const getMockAIResponse = async (message: string, mode: string, file?: Fi
   if (API_KEY) {
     const genAI = new GoogleGenerativeAI(API_KEY);
     // Use confirmed-available models from ListModels — lite models have better free quota
-    const models = ["gemini-2.0-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-001"];
+    const models = ["gemini-1.5-flash", "gemini-2.0-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-001"];
     
     for (const modelName of models) {
       try {
