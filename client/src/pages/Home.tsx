@@ -115,7 +115,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative flex h-[100dvh] w-[100dvw] bg-black overflow-hidden font-outfit">
+    <div className="fixed inset-0 flex bg-black overflow-hidden font-outfit">
       {/* Ambient glows */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-purple-700/20 rounded-full blur-[100px]" />
@@ -139,7 +139,14 @@ export default function Home() {
       {sidebarOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={() => setSidebarOpen(false)}>
           <div className="absolute left-0 top-0 h-full w-72 bg-[#0a0a0a] border-r border-[#262626] shadow-2xl" onClick={e => e.stopPropagation()}>
-            <Sidebar xp={xp} onAction={(t) => { handleSendMessage(t); setSidebarOpen(false); }} />
+            <Sidebar 
+              onAction={(t) => { handleSendMessage(t); setSidebarOpen(false); }}
+              sessions={sessions}
+              currentSessionId={currentSession.id}
+              onNewChat={() => { startNewChat(); setSidebarOpen(false); }}
+              onSwitchSession={(s) => { switchSession(s); setSidebarOpen(false); }}
+              onDeleteSession={removeSession}
+            />
           </div>
         </div>
       )}

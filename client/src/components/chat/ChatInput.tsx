@@ -82,25 +82,25 @@ export default function ChatInput({ onSendMessage }: { onSendMessage: (msg: stri
   return (
     <div className="w-full relative px-4 pb-4">
       {/* Quick Actions (Hint, Concept) */}
-      <div className="flex gap-2 mb-2.5 px-2 overflow-x-auto no-scrollbar scroll-smooth">
+      <div className="flex flex-wrap justify-center gap-2 mb-2.5 px-2">
         <button 
           type="button"
           onClick={() => onSendMessage("Can I get a hint?")} 
-          className="whitespace-nowrap px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-yellow-500 hover:bg-[#1a1a1a] hover:border-yellow-500/30 transition-all flex items-center gap-1.5"
+          className="px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-yellow-500 hover:bg-[#1a1a1a] hover:border-yellow-500/30 transition-all flex items-center gap-1.5"
         >
           <Lightbulb size={14}/> Need a Hint?
         </button>
         <button 
           type="button"
           onClick={() => onSendMessage("Teach me a new concept")} 
-          className="whitespace-nowrap px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-purple-400 hover:bg-[#1a1a1a] hover:border-purple-500/30 transition-all flex items-center gap-1.5"
+          className="px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-purple-400 hover:bg-[#1a1a1a] hover:border-purple-500/30 transition-all flex items-center gap-1.5"
         >
           <BrainCircuit size={14}/> Learn a Concept
         </button>
         <button 
           type="button"
           onClick={() => onSendMessage("Give me a random aptitude question")} 
-          className="whitespace-nowrap px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-emerald-400 hover:bg-[#1a1a1a] hover:border-emerald-500/30 transition-all flex items-center gap-1.5"
+          className="px-3.5 py-1.5 rounded-full bg-[#121212] border border-[#262626] shadow-sm text-xs font-bold text-emerald-400 hover:bg-[#1a1a1a] hover:border-emerald-500/30 transition-all flex items-center gap-1.5"
         >
           <Dices size={14}/> Random Question
         </button>
