@@ -40,6 +40,8 @@ jobs:
         run: |
           # Copy the dist to the root so actions/upload-pages-artifact can easily find it
           cp -r ./client/dist ./dist
+          # GitHub Pages SPA fix: copy index.html to 404.html so refresh works!
+          cp ./dist/index.html ./dist/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
