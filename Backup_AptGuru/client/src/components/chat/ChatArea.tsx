@@ -27,8 +27,8 @@ export default function ChatArea({ messages, isTyping, onTopicSelect }: { messag
   }, [messages, isTyping]);
 
   return (
-    <div className="flex-1 h-full w-full overflow-y-auto no-scrollbar px-5 md:px-8 py-6 pb-20 scroll-smooth">
-      <div className="w-full max-w-6xl mx-auto space-y-8">
+    <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-6 scroll-smooth">
+      <div className="max-w-4xl mx-auto space-y-8">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-10 animate-in fade-in zoom-in duration-500">
             {/* Static icon — no glow */}

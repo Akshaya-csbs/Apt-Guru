@@ -271,7 +271,7 @@ export default function Home() {
         </header>
 
         {/* Chat Messages — takes all remaining space */}
-        <div className="flex-1 min-h-0 flex flex-col relative w-full">
+        <div className="flex-1 min-h-0 overflow-y-auto">
           <ChatArea
             messages={messages}
             isTyping={isTyping}
@@ -281,12 +281,13 @@ export default function Home() {
 
         {/* Chat Input — pinned to bottom */}
         <div className="shrink-0 bg-black border-t border-[#1e1e1e] pb-1">
-          <div className="w-full max-w-6xl mx-auto">
-            <ChatInput onSendMessage={handleSendMessage} />
-            <p className="text-center text-[9px] text-neutral-700 -mt-1 pb-1">
-              AptGuru can make mistakes. Verify important answers.
-            </p>
-          </div>
+          <p className="text-center text-[11px] font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 pt-2 pb-0.5 tracking-wide select-none">
+            Welcome to AptGuru
+          </p>
+          <ChatInput onSendMessage={handleSendMessage} />
+          <p className="text-center text-[9px] text-neutral-700 -mt-1 pb-1">
+            AptGuru can make mistakes. Verify important answers.
+          </p>
         </div>
 
         {/* Mobile Bottom Tab Bar */}
