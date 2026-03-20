@@ -36,7 +36,7 @@ jobs:
         working-directory: ./client
         run: npm run build
         env:
-          VITE_GEMINI_API_KEY: "AIzaSyDXZTSHq4-ZhArjX9ltMZvQWzZ7KfauSO8"
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Prepare dist for Pages
         run: |

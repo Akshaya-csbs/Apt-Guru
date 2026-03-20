@@ -59,30 +59,13 @@ export const getMockAIResponse = async (message: string, mode: string, file?: Fi
     }
   }
 
-  // 2️⃣ Pollinations POST fallback (anonymous, no auth needed)
+  // 2️⃣ Pollinations GET fallback (anonymous, robust against CORS)
   try {
-    const res = await fetch("https://text.pollinations.ai/openai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "openai",
-        seed: 42,
-        messages: [
-          { role: "system", content: systemInstruction.slice(0, 2000) },
-          { role: "user", content: message }
-        ]
-      })
-    });
+    const promptStr = systemInstruction.slice(0, 1500) + "\n\nUser Question:\n" + message;
+    const res = await fetch(`https://text.pollinations.ai/prompt/${encodeURIComponent(promptStr)}?model=openai&seed=42`);
 
     if (res.ok) {
-      const contentType = res.headers.get("content-type") || "";
-      let text = "";
-      if (contentType.includes("application/json")) {
-        const data = await res.json();
-        text = data?.choices?.[0]?.message?.content || "";
-      } else {
-        text = await res.text();
-      }
+      const text = await res.text();
       if (isValidResponse(text)) {
         console.log("✅ Pollinations fallback answered");
         return text;
