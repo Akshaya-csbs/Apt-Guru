@@ -289,37 +289,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile Bottom Tab Bar */}
-        <nav className="md:hidden shrink-0 flex items-center justify-around border-t border-[#1e1e1e] bg-black/95 backdrop-blur-md py-2">
-          {([
-            { id:"chat",     icon: Brain,         label:"Chat"     },
-            { id:"topics",   icon: BookOpen,      label:"Topics"   },
-            { id:"progress", icon: BarChart3,     label:"Progress" },
-          ] as const).map(({ id, icon: Icon, label }) => (
-            <button
-              key={id}
-              onClick={() => {
-                setActiveTab(id);
-                if (id === "topics")   handleSendMessage("Show me all aptitude topics I can learn today.");
-                if (id === "progress") handleSendMessage("Show me my current learning progress and XP.");
-              }}
-              className={`flex flex-col items-center gap-0.5 px-5 transition-all ${
-                activeTab === id ? "text-pink-500" : "text-neutral-500"
-              }`}
-            >
-              <Icon size={19}/>
-              <span className="text-[9px] font-semibold">{label}</span>
-            </button>
-          ))}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="flex flex-col items-center gap-0.5 px-5 text-neutral-500"
-          >
-            <Calculator size={19}/>
-            <span className="text-[9px] font-semibold">Stats</span>
-          </button>
-        </nav>
-
       </div>
     </div>
   );

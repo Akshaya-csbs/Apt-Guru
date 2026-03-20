@@ -112,58 +112,6 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* ── XP / Progress ── */}
-      <div className="px-4 pb-4 shrink-0 border-t border-[#1e1e1e] pt-3">
-        <div className="p-4 bg-[#0d0d0d] rounded-2xl border border-[#262626] relative">
-          <div className="absolute -top-3 -right-3">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#f09433] to-[#dc2743] border-2 border-black flex items-center justify-center text-white shadow-sm">
-              <Award size={13} className="fill-white" />
-            </div>
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-white">Level {levelNum}: {levelName}</span>
-            <span className="text-xs font-bold text-pink-500">{xp} <span className="text-[10px] text-neutral-500">/ {nextThreshold} XP</span></span>
-          </div>
-          <div className="w-full bg-[#262626] rounded-full h-2 mb-1.5 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-purple-500 via-pink-500 to-[#f09433] h-full rounded-full transition-all duration-1000"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="text-[10px] text-neutral-500">{nextThreshold - xp} XP to next badge</p>
-        </div>
-
-        {/* Daily Challenges */}
-        <div className="mt-3 space-y-2">
-          <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.18em] ml-1">Daily Challenges</p>
-          <div
-            onClick={() => onAction?.("Start daily challenge: Speed Math")}
-            className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0d0d0d] border border-[#262626] hover:border-pink-500/40 cursor-pointer transition-all group/item"
-          >
-            <div className="w-8 h-8 rounded-lg bg-black text-pink-500 flex items-center justify-center shrink-0">
-              <Zap size={15} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-white">Speed Math</p>
-              <p className="text-[10px] text-neutral-500">20/20 completed</p>
-            </div>
-            <span className="text-[10px] font-bold text-pink-500 bg-pink-500/10 px-1.5 py-0.5 rounded-md border border-pink-500/20">DONE</span>
-          </div>
-          <div
-            onClick={() => onAction?.("Start daily challenge: Logical Puzzles")}
-            className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0d0d0d] border border-[#262626] hover:border-purple-500/40 cursor-pointer transition-all group/item"
-          >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#f09433] to-[#bc1888] text-white flex items-center justify-center shrink-0">
-              <Brain size={15} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-white">Logical Puzzles</p>
-              <p className="text-[10px] text-pink-400 font-semibold">2/5 Focus Time...</p>
-            </div>
-            <ChevronRight size={14} className="text-neutral-600 group-hover/item:text-purple-400 transition-colors shrink-0" />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

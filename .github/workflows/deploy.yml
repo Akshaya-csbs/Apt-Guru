@@ -35,6 +35,8 @@ jobs:
       - name: Build project
         working-directory: ./client
         run: npm run build
+        env:
+          VITE_GEMINI_API_KEY: "AIzaSyDXZTSHq4-ZhArjX9ltMZvQWzZ7KfauSO8"
 
       - name: Prepare dist for Pages
         run: |
